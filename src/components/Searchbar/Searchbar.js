@@ -1,8 +1,8 @@
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { Formik } from 'formik';
 import {
   Icon,
-  SearchBar,
+  Header,
   SearchForm,
   SearchFormButton,
   SearchFormInput,
@@ -29,7 +29,10 @@ export const Searchbar = ({ onSubmit }) => {
     }
 
     if (savedPictures !== null) {
-      if (JSON.parse(savedPictures).searchQuery === values.searchQuery) {
+      if (
+        JSON.parse(savedPictures).searchQuery.toLowerCase() ===
+        values.searchQuery.toLowerCase()
+      ) {
         return repeatRequest();
       }
     }
@@ -42,7 +45,7 @@ export const Searchbar = ({ onSubmit }) => {
 
   return (
     <Formik initialValues={{ searchQuery: '' }} onSubmit={handleSubmit}>
-      <SearchBar>
+      <Header>
         <SearchForm>
           <SearchFormButton type="submit">
             <Icon />
@@ -55,8 +58,7 @@ export const Searchbar = ({ onSubmit }) => {
             placeholder="Search images and photos"
           />
         </SearchForm>
-        <Toaster />
-      </SearchBar>
+      </Header>
     </Formik>
   );
 };

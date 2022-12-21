@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Form, Field } from 'formik';
 import { IoSearchCircleOutline } from 'react-icons/io5';
 
-export const SearchBar = styled.header`
+export const Header = styled.header`
   top: 0;
   left: 0;
   position: sticky;
