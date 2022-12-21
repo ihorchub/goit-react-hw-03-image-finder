@@ -30,8 +30,8 @@ export const Searchbar = ({ onSubmit }) => {
 
     if (savedPictures !== null) {
       if (
-        JSON.parse(savedPictures).searchQuery.toLowerCase() ===
-        values.searchQuery.toLowerCase()
+        JSON.parse(savedPictures).searchQuery.toLowerCase().trim() ===
+        values.searchQuery.toLowerCase().trim()
       ) {
         return repeatRequest();
       }

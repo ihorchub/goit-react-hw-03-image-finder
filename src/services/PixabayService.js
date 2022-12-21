@@ -23,8 +23,8 @@ export class PixabayApiService {
       const response = await axios.get(BASE_URL, { params: searchParams });
       this.incrementPage();
       return response.data.hits;
-    } catch {
-      console.log(error.message);
+    } catch (error) {
+      console.error(error);
     }
   }
 
