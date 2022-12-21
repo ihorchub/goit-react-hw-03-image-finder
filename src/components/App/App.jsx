@@ -3,11 +3,13 @@ import { Toaster } from 'react-hot-toast';
 import { GlobalStyle } from './GlobalStyles';
 import { Searchbar } from 'components/Searchbar/Searchbar';
 import { PixabayApiService } from 'services/PixabayService';
+import { ImageGallery } from 'components/ImageGallery/ImageGallery';
+import { Title, Wrapper } from './App.styled';
 
 const fetchPixabay = new PixabayApiService();
 
 export class App extends Component {
-  state = { searchQuery: '' };
+  state = { searchQuery: '', images: [] };
 
   componentDidMount() {
     const savedPictures = sessionStorage.getItem('pictures');
@@ -25,8 +27,7 @@ export class App extends Component {
       fetchPixabay
         .axiosImages(newQuery)
         .then(data => {
-          console.log(newQuery);
-          console.log(data);
+          this.setState(() => ({ images: [...data] }));
         })
         .catch(error => {
           console.error(error);
@@ -40,17 +41,17 @@ export class App extends Component {
 
   render() {
     return (
-      <>
+      <Wrapper>
         <Searchbar onSubmit={this.formSubmit} />
         {!this.state.searchQuery ? (
-          <h1>Make a request to display images</h1>
+          <Title>Make a request to display images</Title>
         ) : (
-          <h1>The result of your request "{this.state.searchQuery}"</h1>
+          <Title>The result of your request "{this.state.searchQuery}"</Title>
         )}
-
+        <ImageGallery images={this.state.images} />
         <GlobalStyle />
         <Toaster />
-      </>
+      </Wrapper>
     );
   }
 }
