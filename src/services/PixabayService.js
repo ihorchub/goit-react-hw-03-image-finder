@@ -19,13 +19,9 @@ export class PixabayApiService {
       page: this.page,
     });
 
-    try {
-      const response = await axios.get(BASE_URL, { params: searchParams });
-      this.incrementPage();
-      return response.data.hits;
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await axios.get(BASE_URL, { params: searchParams });
+    this.incrementPage();
+    return response.data;
   }
 
   incrementPage() {
@@ -38,9 +34,5 @@ export class PixabayApiService {
 
   numberOfResponses() {
     return this.perPage;
-  }
-
-  currentPage() {
-    return this.page - 1;
   }
 }

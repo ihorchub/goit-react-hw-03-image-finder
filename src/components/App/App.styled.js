@@ -9,5 +9,5 @@ export const Wrapper = styled.div`
 
 export const Title = styled.h1`
   padding-left: 16px;
-  font-size: 24px;
+  font-size: 20px;
 `;
