@@ -1,8 +1,8 @@
 import { Image, Item } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = ({ smallImage, tags }) => {
+export const ImageGalleryItem = ({ smallImage, tags, onClick }) => {
   return (
-    <Item>
+    <Item onClick={onClick}>
       <Image src={smallImage} alt={tags} />
     </Item>
   );

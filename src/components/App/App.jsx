@@ -1,14 +1,15 @@
 import { Component } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { Loader } from 'services/Loader';
-import * as Scroll from 'react-scroll';
 import { repeatRequest, emptyRequest } from 'services/toasts';
-import { GlobalStyle } from './GlobalStyles';
-import { Searchbar } from 'components/Searchbar/Searchbar';
+import { scrollToTop, scrollHandler } from 'services/Scroll';
+import { LoaderMore, LoaderGallery } from 'services/Loader';
 import { PixabayApiService } from 'services/PixabayService';
+import { Title, Wrapper, Load } from './App.styled';
+import { GlobalStyle } from './GlobalStyles';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
-import { Title, Wrapper } from './App.styled';
+import { Searchbar } from 'components/Searchbar/Searchbar';
 import { LoadMore } from 'components/LoadMore/LoadMore';
+import { Modal } from 'components/Modal/Modal';
 
 const fetchPixabay = new PixabayApiService();
 const fullAnswer = fetchPixabay.numberOfResponses();
@@ -22,6 +23,8 @@ export class App extends Component {
     status: 'idle',
     error: null,
     buttonLoader: false,
+    showModal: false,
+    selectedImage: null,
   };
 
   componentDidMount() {
@@ -41,7 +44,9 @@ export class App extends Component {
       this.setState({ status: 'pending' });
       try {
         const data = await fetchPixabay.axiosImages(newQuery);
+        scrollToTop();
         if (data.totalHits > 0) {
+          console.log(data.hits);
           this.setState(() => ({
             images: [...data.hits],
             status: 'resolved',
@@ -72,7 +77,7 @@ export class App extends Component {
           status: 'resolved',
           buttonLoader: false,
         }));
-        this.scrollHandler();
+        scrollHandler();
       } catch (error) {
         this.setState({
           buttonLoader: false,
@@ -111,38 +116,53 @@ export class App extends Component {
     });
   };
 
-  scrollHandler = () => {
-    const scroll = Scroll.animateScroll;
-    scroll.scrollMore(350);
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
+
+  handlerBigImage = link => {
+    this.setState({ selectedImage: link, showModal: true });
   };
 
   render() {
-    const { status, error, total, page, searchQuery, images, buttonLoader } =
-      this.state;
+    const {
+      status,
+      error,
+      total,
+      page,
+      searchQuery,
+      images,
+      buttonLoader,
+      showModal,
+      selectedImage,
+    } = this.state;
 
     return (
-      <Wrapper>
-        <Searchbar onSubmit={this.formSubmit} />
-        {status === 'idle' && <Title>Make a request to display images</Title>}
-        {status === 'pending' && <Title>Loading...</Title>}
-        {status === 'rejected' && (
-          <Title style={{ color: 'red' }}>{error}</Title>
-        )}
-        {status === 'resolved' && (
-          <>
-            <Title>The result of your request "{searchQuery}"</Title>
-            <ImageGallery images={images} />
-            {total / fullAnswer > page && (
-              <LoadMore
-                onClick={this.clickLoadMore}
-                children={buttonLoader ? Loader : 'Load more'}
-              />
-            )}
-          </>
-        )}
-        <GlobalStyle />
-        <Toaster />
-      </Wrapper>
+      <>
+        <Wrapper>
+          <Searchbar onSubmit={this.formSubmit} />
+          {status === 'idle' && <Title>Make a request to display images</Title>}
+          {status === 'pending' && <Load>{LoaderGallery}</Load>}
+          {status === 'rejected' && (
+            <Title style={{ color: 'red' }}>{error}</Title>
+          )}
+          {status === 'resolved' && (
+            <>
+              <Title>The result of your request "{searchQuery}"</Title>
+              <ImageGallery images={images} onSelect={this.handlerBigImage} />
+              {total / fullAnswer > page && (
+                <LoadMore
+                  onClick={this.clickLoadMore}
+                  children={buttonLoader ? LoaderMore : 'Load more'}
+                />
+              )}
+            </>
+          )}
+          <GlobalStyle />
+          <Toaster />
+        </Wrapper>
+        {showModal && <Modal onClose={this.toggleModal} url={selectedImage} />}
+      </>
     );
   }
 }
