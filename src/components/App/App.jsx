@@ -41,12 +41,11 @@ export class App extends Component {
     const nextPage = this.state.page;
 
     if (prevState.searchQuery !== newQuery) {
+      scrollToTop();
       this.setState({ status: 'pending' });
       try {
-        const data = await fetchPixabay.axiosImages(newQuery);
-        scrollToTop();
-        if (data.totalHits > 0) {
-          console.log(data.hits);
+        const data = await fetchPixabay.axiosImages(newQuery);        
+        if (data.totalHits > 0) {          
           this.setState(() => ({
             images: [...data.hits],
             status: 'resolved',
